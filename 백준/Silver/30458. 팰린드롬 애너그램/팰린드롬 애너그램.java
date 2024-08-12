@@ -12,14 +12,12 @@ public class Main {
         int check [] = new int[26];
         int mid = n/2;
 
-        for(int i = 0; i < mid; i++){
-            check[str.charAt(i) -  'a'] += 1;
+        for(int i = 0; i < n; i++){
+            check[str.charAt(i) - 'a'] += 1;
         }
 
-        if(n%2 == 1) mid++;
-
-        for(int i = mid; i < n;  i++){
-            check[str.charAt(i) -  'a'] += 1;
+        if(n%2 == 1) {
+            check[str.charAt(n/2) - 'a'] -= 1;
         }
 
         String result = "Yes";
