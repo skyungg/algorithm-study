@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,21 +6,20 @@ import java.util.*;
 public class Main {
     public static void main(String [] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
-        String [] arr = br.readLine().split("");
-
+        int n = Integer.parseInt(br.readLine());
+        String str = br.readLine();
         int check [] = new int[26];
+        int mid = n/2;
 
-        for(int i = 0; i < n; i++){
-            int tmp = arr[i].charAt(0) - 'a';
-            check[tmp] += 1;
+        for(int i = 0; i < mid; i++){
+            check[str.charAt(i) -  'a'] += 1;
         }
 
-        if(n%2 == 1){
-            int tmp = arr[n/2].charAt(0) - 'a';
-            check[tmp] -= 1;
+        if(n%2 == 1) mid++;
+
+        for(int i = mid; i < n;  i++){
+            check[str.charAt(i) -  'a'] += 1;
         }
 
         String result = "Yes";
