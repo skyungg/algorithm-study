@@ -1,10 +1,10 @@
 class Solution {
     public int[] solution(int rows, int columns, int[][] queries) {
-        int n = queries.length;     // 작은 수 
+        int n = queries.length;
         int[] answer = new int[n];
         int [][] arr = new int[rows][columns];
         
-        for(int i = 0; i < rows; i++){          // 초기 셋팅            
+        for(int i = 0; i < rows; i++){                  
             for(int j = 0; j < columns; j++){
                 arr[i][j] = (((i+1)-1)*columns + (j+1));
             }
