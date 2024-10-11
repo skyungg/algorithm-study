@@ -9,10 +9,8 @@ class Solution {
             pq.offer(scoville[i]);
         }
 
-        while(!pq.isEmpty()){
+        while(pq.size() > 1 && pq.peek() < K){
             int fidx = pq.poll();
-            if(fidx >= K) break;
-            if(pq.isEmpty()) return -1;
             int sidx = pq.poll();
             
             int tmp = fidx + (sidx*2);
@@ -20,6 +18,7 @@ class Solution {
             answer++;
             
         }
+        if(pq.peek() < K) answer = -1;
         
         return answer;
     }
