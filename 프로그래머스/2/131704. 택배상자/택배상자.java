@@ -4,33 +4,18 @@ class Solution {
     public int solution(int[] order) {
         int answer = 0;
         Stack<Integer> stack = new Stack<>();
-        int idx = 1;
-        boolean flag = false;
+        int idx = 0;
         
         for(int i = 0 ; i < order.length; i++){
-            if(order[i] == idx){
-                answer++;
-                idx++;
-                flag = true;
-            }else{
-                if((stack.size() > 0) && (stack.peek() == order[i])){
+            stack.add(i+1);
+            
+            while(!stack.isEmpty()){
+                if(stack.peek() == order[idx]){
                     stack.pop();
                     answer++;
-                    flag = true;
-                }else{
-                    while(idx < order.length){
-                        stack.add(idx++);
-                        if(order[i] == idx){
-                            answer++;
-                            idx++;
-                            flag = true;
-                            break;
-                        }
-                    }
-                }
+                    idx++;
+                }else break;
             }
-            if(!flag)break;
-            else flag = false;
         }
         
         return answer;
