@@ -2,8 +2,11 @@ import java.util.*;
 
 class Solution {
     static ArrayList<ArrayList<Integer>> list;
+    static int n;
     
     public int solution(int n, int[][] wires) {
+        this.n = n;
+        
         list = new ArrayList<>();
         
         for(int i = 0; i < n+1; i++){
@@ -31,8 +34,8 @@ class Solution {
     }
     
     int getCount(int node, int target, boolean [] visited){
-        int top_first = 0;
-        int top_second = 0;
+        int top_first = 1;
+        int top_second = 1;
         visited[node] = true;
         visited[target] = true;     // 끊을 노드
         
@@ -57,22 +60,24 @@ class Solution {
         }
         
         
-        while(!que2.isEmpty()){
-            int cur_point = que2.poll();
-            ArrayList<Integer> tmp = list.get(cur_point);
+//         while(!que2.isEmpty()){
+//             int cur_point = que2.poll();
+//             ArrayList<Integer> tmp = list.get(cur_point);
             
-            for(int i = 0; i < tmp.size(); i++){
-                if(tmp.get(i) == node) continue;
+//             for(int i = 0; i < tmp.size(); i++){
+//                 if(tmp.get(i) == node) continue;
                 
-                if(!visited[tmp.get(i)]){
-                    visited[tmp.get(i)] = true;
-                    top_second++;
-                    que2.add(tmp.get(i));
-                }
-            } 
-        }
+//                 if(!visited[tmp.get(i)]){
+//                     visited[tmp.get(i)] = true;
+//                     top_second++;
+//                     que2.add(tmp.get(i));
+//                 }
+//             } 
+//         }
         // System.out.println("node : "+node+", target: "+target+" / "+top_first+", "+top_second);
-        return Math.abs(top_first - top_second);
+        top_second = n - top_first;
+        
+        return Math.abs(top_first-top_second);
         
     }
 }
