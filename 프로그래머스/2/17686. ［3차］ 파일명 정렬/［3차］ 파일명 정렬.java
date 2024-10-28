@@ -26,18 +26,24 @@ class Solution {
     
     public String[] solution(String[] files) {
         String[] answer = new String[files.length];
-        PriorityQueue<Point> pq = new PriorityQueue<>();
+        // PriorityQueue<Point> pq = new PriorityQueue<>();
+        ArrayList<Point> list = new ArrayList<>();
         
         for(int i = 0; i < files.length; i++){
             String tmp[] = getInfo(files[i]);
-            pq.offer(new Point(tmp[0], Integer.parseInt(tmp[1]), i));
+            list.add(new Point(tmp[0], Integer.parseInt(tmp[1]), i));
+            // pq.offer(new Point(tmp[0], Integer.parseInt(tmp[1]), i));
         }
         
-        int count = 0;
-        while(!pq.isEmpty()){
-            Point p = pq.poll();
-            answer[count++] = files[p.idx];
+        Collections.sort(list);
+        for(int i = 0; i < list.size(); i++){
+            answer[i] = files[list.get(i).idx];
         }
+        // int count = 0;
+        // while(!pq.isEmpty()){
+        //     Point p = pq.poll();
+        //     answer[count++] = files[p.idx];
+        // }
         
         return answer;
     }
