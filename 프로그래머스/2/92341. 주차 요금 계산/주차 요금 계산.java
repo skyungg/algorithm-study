@@ -2,9 +2,9 @@ import java.util.*;
 
 class Solution {
     static int[] fees;
-    static HashMap<String, ArrayList<String>> map = new HashMap<>();
     public int[] solution(int[] fees, String[] records) {
         this.fees = fees;
+        HashMap<String, ArrayList<String>> map = new HashMap<>();
         
         // 1. map -> 차량번호마다 입출차 시간 저장
         for(int i = 0; i < records.length; i++){
@@ -19,7 +19,7 @@ class Solution {
         }
         
         // 2. 주차 요금 계산하기
-        HashMap<String, Integer> hmap = parkingFee();
+        HashMap<String, Integer> hmap = parkingFee(map);
         int [] answer = new int[hmap.size()];
         List<String> keySet = new ArrayList<>(map.keySet());
         Collections.sort(keySet);
@@ -31,35 +31,20 @@ class Solution {
         return answer;
     }
     
-    HashMap<String, Integer> parkingFee(){
+    HashMap<String, Integer> parkingFee(HashMap<String, ArrayList<String>> map){
         HashMap<String, Integer> hmap = new HashMap<>();
         
-        int count = 0;
         for(String key : map.keySet()){
             ArrayList<String> tmp = map.get(key);
             if(tmp.size()%2 != 0) map.get(key).add("23:59");
             
             int time = 0;
             for(int i = 0; i < tmp.size(); i+=2){
-                String in = tmp.get(i);
-                String out = tmp.get(i+1);
-                time += calculateTime(in, out);
+                time += calculateTime(tmp.get(i), tmp.get(i+1));
             }
             
-            int fee = 0;
-            if(time <= fees[0]) hmap.put(key, fees[1]);
-            else{
-                fee += fees[1];        // 기본 요금
-                
-                time -= fees[0];    // 기본 시간 제외
-                if((time)%fees[2] != 0){
-                    fee += ((time/fees[2])+1)*fees[3];
-                }else{
-                    fee += (time/fees[2])*fees[3];
-                }
-                hmap.put(key, fee);
-            }
-            count++;
+            int fee = calculateFee(time);
+            hmap.put(key, fee);
         }
         return hmap;
     }
@@ -69,26 +54,16 @@ class Solution {
         int in_min = Integer.parseInt(in.substring(3, 5));
         int out_hour = Integer.parseInt(out.substring(0, 2));
         int out_min = Integer.parseInt(out.substring(3, 5));
+
+        return (out_hour*60+out_min)-(in_hour*60+in_min);
+    }
+    
+    int calculateFee(int time){
+        if(time <= fees[0]) return fees[1];     // 기본 시간 이내
         
-        // 시간 계산
-        int hour = 0;
-        int min = 0;
-        if(in_min == 0){
-            if(in_hour == out_min){
-                min = out_min;
-            }else{
-                hour = (out_hour-in_hour)*60;
-                min = out_min;
-            }
-        }else{
-            if(out_hour == in_hour){
-                min = out_min-in_min;
-            }else{
-                hour = (out_hour-(in_hour+1))*60;
-                min = out_min+(60-in_min);
-            }
-        }
+        int extraTime = time - fees[0];
+        int extraFee = (int) Math.ceil((double)extraTime/fees[2])*fees[3];
         
-        return hour+min;
+        return fees[1] + extraFee;        
     }
 }
