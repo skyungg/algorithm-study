@@ -1,17 +1,18 @@
 import java.util.*;
 
 class Solution {
+    HashMap<String, Integer> map = new HashMap<>(); // <문자조합, 빈도수>
     public String[] solution(String[] orders, int[] course) {
         ArrayList<String> result = new ArrayList<>();   // 결과
         
         for(int cou : course){
-            HashMap<String, Integer> map = new HashMap<>(); // <문자조합, 빈도수>
+            map = new HashMap<>(); // 매번 갱신
             
             // 크기가 cou인 조합 구하기
             for(String order : orders){
                 char[] orderArr = order.toCharArray();
                 Arrays.sort(orderArr);
-                combination(orderArr, cou, 0, "", map);
+                combination(orderArr, cou, 0, "");
             }
             
             // 빈도수가 2이 이상인 조합에서 최빈값 구하기
@@ -39,14 +40,14 @@ class Solution {
         
         return answer;
     }
-    void combination(char [] order, int depth, int start, String str, HashMap<String, Integer> map){
+    void combination(char [] order, int depth, int start, String str){
         if(depth == str.length()){
             map.put(str, map.getOrDefault(str, 0)+1);
             return;
         }
         
         for(int i = start; i < order.length; i++){
-            combination(order, depth, i+1, str+order[i], map);
+            combination(order, depth, i+1, str+order[i]);
         }
     }
 }
