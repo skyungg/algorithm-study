@@ -9,15 +9,6 @@ public class Main {
             score[i] = Integer.parseInt(br.readLine());
         }
 
-        if (n == 1) {
-            System.out.println(score[1]);
-            return;
-        }
-        if (n == 2) {
-            System.out.println(score[1] + score[2]);
-            return;
-        }
-
         int [] dp = new int[n+1];       // 현재 계단에서의 최댓값
         dp[1] = score[1];
 
