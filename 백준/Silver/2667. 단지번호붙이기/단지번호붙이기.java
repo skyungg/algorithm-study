@@ -1,80 +1,72 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+/*
+7
+0110100
+0110101
+1110101
+0000111
+0100000
+0111110
+0111000
+ */
+
+import java.io.*;
 import java.util.*;
 
 public class Main {
     static int [][] map;
     static boolean [][] visited;
-    static int cnt;
-    static int n;
-
-    public static void main(String [] args) throws IOException {
+    static int vcnt;
+    static int [] dx = {0, -1, 0, 1};
+    static int [] dy = {-1, 0, 1, 0};
+    public static void main(String [] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        n = Integer.parseInt(br.readLine());
+        int n = Integer.parseInt(br.readLine());
         map = new int[n][n];
-        visited = new boolean[n][n];    // 방문 배열
+        visited = new boolean[n][n];
+        ArrayList<Integer> list = new ArrayList<>();
 
         for(int i = 0; i < n; i++){
-            String[] strArr = br.readLine().split("");
+            String tmp = br.readLine();
             for(int j = 0; j < n; j++){
-                map[i][j] = Integer.parseInt(strArr[j]);
+                map[i][j] = tmp.charAt(j) - '0';
             }
         }
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-
+        int count = 0;
         for(int i = 0; i < n; i++){
-            for(int j = 0; j< n; j++){
-                if(map[i][j] == 1 && !visited[i][j]){        // 1이면서 아직 방문 전
-                    cnt = 0;
-                    bfs(i, j);
-                    pq.offer(cnt);
-                }
-
+            for(int j = 0; j < n; j++){
+                if(map[i][j] == 0) continue;
+                if(visited[i][j]) continue;
+                vcnt = 0;
+                dfs(i, j, n);
+                count++;
+                list.add(vcnt);
             }
         }
 
-        System.out.println(pq.size());
-        while(!pq.isEmpty()){
-            System.out.println(pq.poll());
+        Collections.sort(list);
+        System.out.println(count);
+        for(int i : list){
+            System.out.println(i);
         }
     }
 
-    static void bfs(int i, int j){
-        Queue<Point> que = new LinkedList<>();
-        visited[i][j] = true;
-        que.add(new Point(i, j));
+    static void dfs(int x, int y, int n){
+        vcnt++; // 마을 안 단지 수 증가
+        visited[x][y] = true;
 
-        int [] dx = {0, 1, 0, -1};
-        int [] dy = {1, 0, -1, 0};
+        for(int i = 0; i < 4; i++){
+            int tx = x + dx[i];
+            int ty = y + dy[i];
 
-        while(!que.isEmpty()){
-            Point p = que.poll();
-            cnt++;
-
-            for(int idx = 0; idx < 4; idx++){
-                int tx = p.i + dx[idx];
-                int ty = p.j + dy[idx];
-
-                if(tx < 0 || tx >= n || ty < 0 || ty >= n) continue;
-
-                if(map[tx][ty] == 1 && !visited[tx][ty]){
-                    que.add(new Point(tx, ty));
-                    visited[tx][ty] = true;
-                }
+            if(checkRange(n, tx, ty) && !visited[tx][ty] && map[tx][ty] == 1) {
+                dfs(tx, ty, n);
             }
         }
-
     }
 
-    static class Point{
-        int i;
-        int j;
-
-        public Point(int i, int j){
-            this.i = i;
-            this.j = j;
-        }
+    static boolean checkRange(int n, int tx, int ty){
+        if(tx < 0 || tx >= n  || ty < 0 || ty >= n) return false;
+        return true;
     }
 }
