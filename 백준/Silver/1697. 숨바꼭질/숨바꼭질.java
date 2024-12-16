@@ -2,22 +2,6 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-	static class Point implements Comparable<Point>{
-		int cur;
-		int time;
-		
-		public Point(int cur, int time) {
-			this.cur = cur;
-			this.time = time;
-		}
-		
-		@Override
-		public int compareTo(Point p) {
-			return this.time - p.time;
-		}
-	}
-	
-
 	public static void main(String[] args) throws IOException{
 		// TODO Auto-generated method stub
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -31,44 +15,28 @@ public class Main {
 		}
 		
 		boolean [] visited = new boolean[100001];
-		PriorityQueue<Point> pq = new PriorityQueue<>();
-		pq.add(new Point(n, 0));
+		Queue<int []> que = new LinkedList<>();
+		que.add(new int[] {n, 0});
 		
-		while(!pq.isEmpty()) {
-			Point p = pq.poll();
-			if(p.cur == k) {
-				System.out.println(p.time);
-				break;
+		while(!que.isEmpty()) {
+			int [] p = que.poll();
+			int point = p[0];
+			int time = p[1];
+			
+			if(point == k) {
+				System.out.println(time);
+				return;
 			}
 			
-			int a = p.cur-1;
-			int b = p.cur+1;
-			int c = p.cur*2;
+			int [] nextPoints = {point-1, point+1, point*2};
 			
-			if(checkRange(a)) {
-				if(!visited[a]) {
-					visited[a] = true;
-					pq.add(new Point(a, p.time+1));
-				}
-			}
-			if(checkRange(b)) {
-				if(!visited[b]) {
-					visited[b] = true;
-					pq.add(new Point(b, p.time+1));
-				}
-			}
-			if(checkRange(c)) {
-				if(!visited[c]) {
-					visited[c] = true;
-					pq.add(new Point(c, p.time+1));
+			for(int next : nextPoints) {
+				if(next >= 0 && next <= 100000 && !visited[next]) {
+					visited[next] = true;
+					que.add(new int[] {next, time+1});
 				}
 			}
 		}
-	}
-	
-	static boolean checkRange(int num) {
-		if(num < 0 || num > 100000) return false;
-		return true;
 	}
 
 }
