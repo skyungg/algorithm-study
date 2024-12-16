@@ -8,36 +8,28 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int t = Integer.parseInt(br.readLine());
 		StringBuilder sb = new StringBuilder();
+		
 		for(int tc = 0; tc < t; tc++) {
-			String [] arr = br.readLine().split("");
-			Stack<String> stack1 = new Stack<>();
-			Stack<String> stack2 = new Stack<>();
-			
-			for(int i = 0; i < arr.length; i++) {
-				if(arr[i].equals("(")) {
-					if(!stack2.isEmpty()) {
-						stack2.pop();
-					}else {
-						stack1.add(arr[i]);
-					}
+			String str = br.readLine();
+			Stack<Character> stack = new Stack<>();
+			String result = "";
+			for(int i = 0; i < str.length(); i++) {
+				if(str.charAt(i) == '(') {
+					stack.add('(');
 				}else {
-					if(!stack1.isEmpty()) {
-						stack1.pop();
+					if(!stack.isEmpty()) {
+						stack.pop();
 					}else {
-						if(stack2.isEmpty()) {
-							stack2.add(arr[i]);
-							break;
-						}
-						stack2.add(arr[i]);
+						result = "NO";
+						break;
 					}
 				}
 			}
-			
-			if(!stack1.isEmpty() || !stack2.isEmpty()) {
-				sb.append("NO"+"\n");
-			}else {
-				sb.append("YES"+"\n");
+			if(result == "") {
+				if(!stack.isEmpty()) result = "NO";
+				else result = "YES";
 			}
+			sb.append(result+"\n");
 		}
 		System.out.println(sb.toString());
 	}
