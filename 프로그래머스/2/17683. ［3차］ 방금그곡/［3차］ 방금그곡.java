@@ -16,7 +16,7 @@ class Solution {
             
             String melody = getMelody(time, original);
 
-            if(containsMelody(melody, m)){
+            if(melody.contains(m)){
                 if(time > resTime){
                     resTime = time;
                     answer = tmp[2];
@@ -56,14 +56,14 @@ class Solution {
         return sb.toString(); 
     }
     
-    boolean containsMelody(String melody, String m) {
-        for (int i = 0; i <= melody.length() - m.length(); i++) {
-            if (melody.startsWith(m, i)) {
-                if (i + m.length() >= melody.length() || melody.charAt(i + m.length()) != '#') {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    // boolean containsMelody(String melody, String m) {
+    //     for (int i = 0; i <= melody.length() - m.length(); i++) {
+    //         if (melody.startsWith(m, i)) {
+    //             if (i + m.length() >= melody.length() || melody.charAt(i + m.length()) != '#') {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
 }
