@@ -3,23 +3,25 @@ import java.util.*;
 class Solution {
     public int solution(int cacheSize, String[] cities) {
         int answer = 0;
-        ArrayList<String> list = new ArrayList<>();
-        if(cacheSize == 0) return cities.length * 5;    // 캐시 적용 모하면 도시배열 길이 *5
+        List<String> caches = new LinkedList<>();   // 캐시 저장
         
-        for(int i = 0; i < cities.length; i++){
-            String str = cities[i].toUpperCase();   // 대문자 변화
+        if(cacheSize == 0) return cities.length*5;
+        
+        for(String str : cities){
+            String city = str.toUpperCase();    // 1. 모두 대문자 처리
             
-            if(list.contains(str)){
-                list.remove(str);
-                list.add(str);
-                answer += 1;
-            }else{
-                if(list.size() >= cacheSize){
-                    list.remove(0);
+            if(!caches.contains(city)){     // 2. cache에 없는 경우
+                if(caches.size() >= cacheSize){
+                    caches.remove(0);   // 캐시 교체 시 맨 앞 삭제
                 }
-                list.add(str);
+                caches.add(city);
                 answer += 5;
-            }  
+                
+            }else{
+                caches.remove(city);
+                caches.add(city);
+                answer += 1;
+            }
         }
         
         
