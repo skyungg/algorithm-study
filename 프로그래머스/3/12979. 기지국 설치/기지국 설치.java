@@ -1,22 +1,28 @@
-import java.util.*;
-
 class Solution {
     public int solution(int n, int[] stations, int w) {
         int answer = 0;
-        int position = 1;   // 현재 아파트 동 위치
-        int idx = 0;        // stations에서의 index
+        int point = 1;      // 현재 위치
+        int coverage = 2 * w + 1;   // 기지국 영향 범위
         
-        while(position <= n){
-            if(idx < stations.length && position >= stations[idx]-w){     // 1. 기지국 설치 X
-                position = stations[idx]+w+1;   // 현재 위치의 기지국 영향권+1로 갱신
-                idx++;
-            }else{
-                // 2. 기존의 기지국 영향권 밖 -> 설치 필요
-                answer++;
-                position += (w*2)+1;
+        // 전처리
+        for(int station : stations){
+            int start = station - w;    // 기지국 시작 영향권 위치
+            int end = station + w;  // 기지국 마지막 영향권 위치
+            
+            if(point  < start){
+                int empty = start - point;    // 포함 되지 않는 영역 수
+                answer += (empty+coverage-1)/coverage;
             }
+            
+            point = end + 1;    // 위치 갱신 -> 현재 영향권의 마지막 위치 +1인 위치
         }
         
+        // 남은 거 처리
+        if(point <= n){
+            int empty = n - point +1;
+            answer += (empty+coverage-1)/coverage;
+        }
+
         return answer;
     }
 }
