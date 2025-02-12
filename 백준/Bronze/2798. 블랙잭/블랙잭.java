@@ -22,13 +22,8 @@ public class Main {
 				for(int k = j+1 ; k < n; k++) {
 					int tmpSum = nums[i]+nums[j]+nums[k];
 					
-					if(tmpSum <= m) {
-						if(tmpSum == m) {
-							System.out.println(m);
-							return;
-						}else {
-							maxResult = Math.max(maxResult, tmpSum);
-						}
+					if(tmpSum <= m && tmpSum > maxResult) {
+                        maxResult = tmpSum;
 					}
 				}
 			}
