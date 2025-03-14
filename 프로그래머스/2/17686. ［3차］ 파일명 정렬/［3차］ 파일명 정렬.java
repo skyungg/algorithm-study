@@ -1,81 +1,79 @@
 import java.util.*;
 
+/*
+아이디어 : 분리후 정렬
+1. head/number 분리
+2. head, number, index 기준 오름차순 정렬
+3. 반환
+*/
+
 class Solution {
-    static class Point implements Comparable<Point> {
+    class File implements Comparable<File> {
         String head;
         int number;
-        int idx;
+        int index;
         
-        public Point(String head, int number, int idx){
+        public File(String head, int number, int index){
             this.head = head;
             this.number = number;
-            this.idx = idx;
+            this.index = index;
         }
         
         @Override
-        public int compareTo(Point o){
-            if(this.head.equals(o.head)){
-                if(this.number == o.number){
-                    return this.idx - o.idx;
-                }
-                return this.number - o.number;
+        public int compareTo(File f){
+            if(this.head.equals(f.head)){
+                if(this.number == f.number){
+                    return this.index - f.index;
+                }else return this.number - f.number;
             }
-            return this.head.compareTo(o.head);
+            return this.head.compareTo(f.head);
         }
     }
     
+    ArrayList<File> list = new ArrayList<>();
     public String[] solution(String[] files) {
-        String[] answer = new String[files.length];
-        // PriorityQueue<Point> pq = new PriorityQueue<>();
-        ArrayList<Point> list = new ArrayList<>();
+        // 1. 분리하기
+        getFiles(files);
         
-        for(int i = 0; i < files.length; i++){
-            String tmp[] = getInfo(files[i]);
-            list.add(new Point(tmp[0], Integer.parseInt(tmp[1]), i));
-            // pq.offer(new Point(tmp[0], Integer.parseInt(tmp[1]), i));
-        }
-        
+        // 2.정렬하기
         Collections.sort(list);
+        
+        String[] answer = new String[files.length];
         for(int i = 0; i < list.size(); i++){
-            answer[i] = files[list.get(i).idx];
+            answer[i] = files[list.get(i).index];
         }
-        // int count = 0;
-        // while(!pq.isEmpty()){
-        //     Point p = pq.poll();
-        //     answer[count++] = files[p.idx];
-        // }
         
         return answer;
     }
     
-    String [] getInfo(String str){
-        String [] tmp = new String[2];
-        int start_idx = 0;
-        
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < str.length(); i++){
-            char ch = str.charAt(i);
-            if(Character.isAlphabetic(ch)){
-                sb.append(ch);
-            }else if(Character.isDigit(ch)){
-                start_idx = i;
-                break;
-            }else{
-                sb.append(ch);
+    void getFiles(String[] files){   // head끝,number 시작 끝 인덱스 반환
+        for(int i = 0; i < files.length; i++){
+            int nextIdx = 0;    // 부분의 시작 인덱스
+            String str = "";
+            String nums = "";
+            
+            // 1. head 구하기
+            for(int idx = 0; idx < files[i].length(); idx++){
+                if(Character.isDigit(files[i].charAt(idx))){  // 첫 숫자 등장
+                    str = files[i].substring(0, idx);
+                    nextIdx = idx;
+                    break;
+                }
             }
-        }
-        tmp[0] = sb.toString().toLowerCase();
-        sb.setLength(0);
-        for(int i = start_idx; i < str.length(); i++){
-            char ch = str.charAt(i);
-            if(Character.isDigit(ch)){
-                sb.append(ch);
-            }else{
-                break;
+            
+            // 2. number 구하기
+            int cnt = 0;
+            int nIdx = 0;   // NUMBER 마지막 인덱스
+            for(int idx = nextIdx; idx < files[i].length(); idx++){
+                if(Character.isDigit(files[i].charAt(idx))){  // 첫 숫자 등장
+                    cnt++;
+                    nIdx = idx + 1;
+                    if(cnt > 5) break;
+                }else break;
             }
+            
+            nums = files[i].substring(nextIdx, nIdx);
+            list.add(new File(str.toUpperCase(), Integer.parseInt(nums), i));
         }
-        tmp[1] = sb.toString();
-        
-        return tmp;
     }
 }
