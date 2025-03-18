@@ -1,71 +1,91 @@
+/*
+아이디어: 구현
+1. 완탐으로 같은모양-2*2 찾기
+2. 지운만큼 answer 증가
+3. 중간에 비었을 경우 위에서 내려 채우기
+*/
 import java.util.*;
 
 class Solution {
-    int [] dx = {0, 0, 1, 1};
-    int [] dy = {0, 1, 0, 1};
-    
+    String [][] map;
+    boolean [][] visited;
+    int m, n;
+    int answer;         // 총 터지는 블록 수
     public int solution(int m, int n, String[] board) {
-        int total_score = 0;    // 전체 점수
-        int cur_score = 1;      // 현재 탐색에서의 점수
-        
-        String[][] map = new String[m][n];
+        this.m = m;
+        this.n = n;
+        // 2차원 배열로 만들기
+        map = new String[m][n]; // m:행, n: 열
         for(int i = 0; i < m; i++){
-            String [] tmp = board[i].split("");
-            map[i] = tmp;
+            map[i] = board[i].split("");
         }
         
+        int curAnswer = 0;
+        
+        // 나올때까지 반복
         while(true){
-            boolean [][] visited = new boolean[m][n];
-            int count = 0;
+            curAnswer = answer;
+            visited = new boolean[m][n];
             
-            // 1. 2*2 블록 찾기
-            for(int i = 0; i < m-1; i++){
-                for(int j = 0; j < n-1; j++){
-                    if(map[i][j].equals(" ")) continue;
-                    if(map[i][j].equals(map[i][j+1]) && map[i][j].equals(map[i+1][j])
-                    && map[i][j].equals(map[i+1][j+1])){   // 4개가 다 같을 경우
-                        for(int k = 0; k < 4; k++){
-                            if(!visited[i+dx[k]][j+dy[k]]){
-                                visited[i+dx[k]][j+dy[k]] = true;
-                                count++;
-                            }
-                        }
+            // 1. 블록 찾기
+            for(int i = 0; i < m; i++){
+                for(int j = 0; j < n; j++){
+                    if(!map[i][j].equals("")){
+                        popBlock(i, j, visited);
                     }
                 }
             }
-            
-            if(count == 0) break;   // 더이상 지울 블록 존재 X
-            
-            total_score += count;
-            
-            // 2. 블록 제거
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (visited[i][j]) {
-                        map[i][j] = " ";
+            // 2. 블록 pop
+            int cnt = 0;
+            for(int i = 0; i < m; i++){
+                for(int j = 0; j < n; j++){
+                    if(visited[i][j]){
+                        map[i][j] = "";
+                        cnt++;
                     }
                 }
             }
+            answer += cnt;
+            if(answer == curAnswer) break;  // pop한 게 없을 때
             
-            // 2. 블록 내리기
-            for(int j = 0; j < n; j++){
-                for(int i = m-1; i >= 0; i--){
-                    if(map[i][j].equals(" ")){
-                        int k = i-1;
-                        
-                        while(k >= 0 && map[k][j].equals(" ")) k--;
-                        if(k >= 0){
-                            map[i][j] = map[k][j];
-                            map[k][j] = " ";
-                        }
-                    }
-                }
+            // 2. 재정비
+            for(int i = 0; i < n; i++){
+                updateMap(i);
             }
-            
         }
-        
-        return total_score;
+        return answer;
     }
     
+    void popBlock(int x, int y, boolean [][] visited){
+        if(x+2 > m || y+2 > n) return;
+        String target = map[x][y];  // 기준 캐릭터
+        
+        for(int i = x; i < x+2; i++){
+            for(int j = y; j < y+2; j++){
+                if(map[i][j].equals("") || !map[i][j].equals(target)) return;
+            }
+        }
+        
+        for(int i = x; i < x+2; i++){
+            for(int j = y; j < y+2; j++){
+                if(!map[i][j].equals("") && map[i][j].equals(target)){
+                    visited[i][j] = true;
+                }
+            }
+        }
+    }
     
+    void updateMap(int col){
+        for(int i = m-1; i > 0; i--){
+            if(map[i][col].equals("")){
+                for(int row = i-1; row >= 0; row--){
+                    if(!map[row][col].equals("")){
+                        map[i][col] = map[row][col];
+                        map[row][col] = "";
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
