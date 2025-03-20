@@ -1,42 +1,50 @@
 import java.util.*;
-
+/*
+아이디어 : Queue, HashMap
+1. enter, leave 할 때마다 que에 저장하기 -> String 배열
+1-1. enter할 때마다 유저아이디 등록하기 -> 
+2. chage일 경우 HashMap에서 이름 변경
+3. que에서 꺼내서 result 출력
+*/
 class Solution {
     public String[] solution(String[] record) {
-        // userId와 nickname을 저장할 Map
-        Map<String, String> userMap = new HashMap<>();
-        // 모든 로그 기록을 저장할 리스트
-        List<String[]> logs = new ArrayList<>();
-
-        // 기록을 처리하며 유저 정보 업데이트 및 로그 저장
-        for (String entry : record) {
-            String[] parts = entry.split(" ");
-            String action = parts[0];
-            String userId = parts[1];
-
-            if (action.equals("Enter")) {
-                userMap.put(userId, parts[2]);  // userId에 해당하는 nickname 업데이트
-                logs.add(new String[] {"Enter", userId});
-            } else if (action.equals("Leave")) {
-                logs.add(new String[] {"Leave", userId});
-            } else if (action.equals("Change")) {
-                userMap.put(userId, parts[2]);  // userId에 해당하는 nickname 변경
+        HashMap<String, String> hmap = new HashMap<>();
+        Queue<String []> que = new LinkedList<>();
+        
+        for(String str : record){
+            String[] tmp = str.split(" ");
+            if(tmp[0].equals("Enter")){     // 들어오기
+                if(!hmap.containsKey(tmp[1])){
+                    hmap.put(tmp[1], tmp[2]);
+                }else{
+                    if(!hmap.get(tmp[1]).equals(tmp[2])){
+                        hmap.replace(tmp[1], tmp[2]);
+                    }
+                }
+                que.add(new String[] {tmp[1], tmp[0]});
+            }else if(tmp[0].equals("Change")){      // 이름 변경
+                hmap.replace(tmp[1], tmp[2]);
+            }else{
+                que.add(new String[] {tmp[1], tmp[0]});
             }
         }
-
-        // 최종 출력 메시지 생성
-        String[] answer = new String[logs.size()];
+        
+        String[] answer = new String [que.size()]; 
+        String enterStr = "님이 들어왔습니다.";
+        String leaveStr = "님이 나갔습니다.";
         int idx = 0;
-        for (String[] log : logs) {
-            String action = log[0];
-            String userId = log[1];
-            String nickname = userMap.get(userId);
-
-            if (action.equals("Enter")) {
-                answer[idx++] = nickname + "님이 들어왔습니다.";
-            } else if (action.equals("Leave")) {
-                answer[idx++] = nickname + "님이 나갔습니다.";
+        while(!que.isEmpty()){
+            String [] res = que.poll();
+            if(res[1].equals("Enter")){
+                String str = hmap.get(res[0]) + enterStr;
+                answer[idx] = str;
+            }else{
+                String str = hmap.get(res[0]) + leaveStr;
+                answer[idx] = str;
             }
+            idx++;
         }
+        
 
         return answer;
     }
