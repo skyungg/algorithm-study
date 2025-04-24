@@ -1,57 +1,33 @@
-class Solution {
-    int curHealth;
-    int curTime;
-    int count;
-    int maxHealth;
-    
-    public int solution(int[] bandage, int health, int[][] attacks) {
-        curHealth = health;     // 현재 체력
-        curTime = 1;            // 현재 시간
-        count = 0;              // 연속 성공 수
-        maxHealth = health;     // 최대 체력
-        
-        
-        for(int i = 0; i < attacks.length; i++){
-            int attack_time = attacks[i][0];    // 공격 시간
-            attack(bandage, attack_time);
-            curHealth -= attacks[i][1];     // 피해
-            if(curHealth <= 0){
-                break;
-                // return -1;
-            }
-            count = 0;          // 연속 성공 수 초기화  
-            curTime++;
-        }
-        
-        if(curHealth > 0){
-            return curHealth;
-        }else{
-            return -1;
-        }
-    }
-    
-    void attack(int[] bandage, int attack_time){
-        for(int i = curTime; i < attack_time; i++){
-            count++;    // 연속 성공 증가
-            curTime++;  // 시간 증가
-            
-            if(curHealth + bandage[1] >= maxHealth){
-                curHealth = maxHealth;
-            }else{
-                curHealth += bandage[1];       // 회복량
-            }
+import java.util.*;
 
-            
-            if(count == bandage[0]){
-                // 연속 성공했을 경우
-                if(curHealth+bandage[2] >= maxHealth){
-                    curHealth = maxHealth;
-                }else{
-                    curHealth += bandage[2];    // 추가 회복량
+class Solution {
+    public int solution(int[] bandage, int health, int[][] attacks) {
+        int curTime = 0;   // 현재 시간
+        int curHealth = health;     // 현재 체력
+        int cnt = 0;    // 연속 성공
+        int attackIdx = 0;  // 공격
+        int sCnt = 0;   // 연속 횟수
+        
+        // for문은 마지막 공격 시간까지 
+        for(int i = 0; i <= attacks[attacks.length-1][0]; i++){
+            // 공격 시간 돌아옴
+            if(attackIdx < attacks.length && attacks[attackIdx][0] == i){
+                curHealth -= attacks[attackIdx][1]; // 공격 차감
+                sCnt = 0;   // 연속 횟수 초기화
+                if(curHealth <= 0) return -1;
+                attackIdx++;
+            }else{
+                sCnt++;
+                curHealth += bandage[1];    // 초당회복량
+                if(sCnt == bandage[0]){
+                    curHealth += bandage[2];
+                    sCnt = 0;
                 }
-                count = 0;  // 연속 성공 초기화           
+
+                if(curHealth >= health) curHealth = health;
             }
-            
         }
+        
+        return curHealth;
     }
 }
