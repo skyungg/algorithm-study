@@ -21,9 +21,12 @@ public class Main {
 			else return a[1] - b[1];			// y좌표 오름차순
 		});
 		
+		StringBuilder sb = new StringBuilder();
 		for(int [] num : nums) {
-			System.out.println(num[0]+" "+num[1]);
+			sb.append(num[0]+" "+num[1]+"\n");
 		}
+		
+		System.out.println(sb.toString());
 		
 	}
 
