@@ -1,47 +1,70 @@
 import java.util.*;
 
 class Solution {
+    class Point{
+        int play;
+        int idx;
+        
+        public Point(int play, int idx){
+            this.play = play;
+            this.idx = idx;
+        }
+    }
     public int[] solution(String[] genres, int[] plays) {
         HashMap<String, Integer> hmap = new HashMap<>();
-        HashMap<String, ArrayList<int[]>> map = new HashMap<>();
+        HashMap<String, List<Point>> map = new HashMap<>();
         
+        // 1. 장르 
         for(int i = 0; i < genres.length; i++){
-            hmap.put(genres[i], hmap.getOrDefault(genres[i], 0)+plays[i]);
-            
-            if(map.containsKey(genres[i])){
-                map.get(genres[i]).add(new int[]{plays[i], i});
+            if(!hmap.containsKey(genres[i])){
+                hmap.put(genres[i], plays[i]);
             }else{
-                ArrayList<int[]> list = new ArrayList<>();
-                list.add(new int[]{plays[i], i});
-                map.put(genres[i], list);
+                hmap.put(genres[i], hmap.get(genres[i])+plays[i]);
             }
+            //hmap.putIfAbsent(genres[i], plays[i]);
+            
+            if(!map.containsKey(genres[i])){
+                map.put(genres[i], new ArrayList<>());
+            }
+            map.get(genres[i]).add(new Point(plays[i], i));
         }
         
-         List<Map.Entry<String, Integer>> entryList = new ArrayList<>(hmap.entrySet());
-        entryList.sort((o1, o2) -> o2.getValue() - o1.getValue());  // 내림차순 정렬
+        // 2. hmap 정렬
+        List<Map.Entry<String, Integer>> list = new LinkedList<>(hmap.entrySet());
+        list.sort((a, b) -> (hmap.get(b.getKey()) - hmap.get(a.getKey())));
         
-        ArrayList<Integer> result = new ArrayList<>();
-        for(Map.Entry<String, Integer> entry : entryList){
-            String genre = entry.getKey();
-            ArrayList<int[]> list = map.get(genre);
-            
-             list.sort((a, b) -> {
-                if (b[0] == a[0]) {
-                    return a[1] - b[1];  // 재생 횟수가 같으면 고유 번호가 낮은 순
-                }
-                return b[0] - a[0];  // 재생 횟수가 많은 순
+        // 3. map 정렬
+        for(String key : map.keySet()){
+            List<Point> tmpList = map.get(key);
+            Collections.sort(tmpList, (a, b) -> {
+                if(a.play == b.play) return a.idx - b.idx;
+                else return b.play - a.play;
             });
+        }
+        
+        // 4. 정답 출력
+        List<Integer> answerList = new ArrayList<>();
+        
+        for(Map.Entry<String, Integer> entry : list){
+            String key = entry.getKey();
             
-            for (int i = 0; i < Math.min(2, list.size()); i++) {
-                result.add(list.get(i)[1]);
+            if(map.get(key).size() < 2){
+                answerList.add(map.get(key).get(0).idx);
+            }else{
+                int limit = 0;
+                for(Point p : map.get(key)){
+                    if(limit >= 2) break;
+                    answerList.add(p.idx);
+                    limit++;
+                }
             }
         }
         
-        int [] answer = new int[result.size()];
-        for(int i = 0; i < result.size(); i++){
-            answer[i] = result.get(i);
+        int[] answer = new int[answerList.size()]; 
+        int cnt = 0;
+        for(int index : answerList){
+            answer[cnt++] = index;
         }
-        
         return answer;
     }
 }
