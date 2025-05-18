@@ -29,18 +29,28 @@ public class Main {
 			boolean [] visited = new boolean[n];
 			long total_budget = 0;		// 총 수익금
 			
-			while(idx > 0) {			
+			while(idx > 0) {
+				boolean flag = false;
+				
 				for(int i = idx-1; i >= 0; i--) {
 					if(!visited[i]) {
 						if(target > arr[i]) {	// 아직 방문 전 + target이 더 큰경우
 							total_budget += target - arr[i];	// 수익금
 							visited[i] = true;
-						}else break;
+						}else{
+							idx = i;
+							target = arr[idx];
+							flag = true;
+							break;
+						}
 					}else break;
 					
 				}
-				idx--;
-				target = arr[idx];
+				if(!flag) {
+					idx--;
+					target = arr[idx];
+				}
+				
 			}
 			
 			sb.append(total_budget+"\n");
