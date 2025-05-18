@@ -24,36 +24,19 @@ public class Main {
 			}
 			
 			// 구현
-			int idx = n-1;
-			int target = arr[idx];		// 기준값
-			boolean [] visited = new boolean[n];
-			long total_budget = 0;		// 총 수익금
+			int target = arr[n-1];		// 기준값
+			long cost = 0;		// 총 수익금
 			
-			while(idx > 0) {
-				boolean flag = false;
-				
-				for(int i = idx-1; i >= 0; i--) {
-					if(!visited[i]) {
-						if(target > arr[i]) {	// 아직 방문 전 + target이 더 큰경우
-							total_budget += target - arr[i];	// 수익금
-							visited[i] = true;
-						}else{
-							idx = i;
-							target = arr[idx];
-							flag = true;
-							break;
-						}
-					}else break;
-					
+			
+			for(int i = n-2; i >= 0; i--) {
+				if(target > arr[i]) {
+					cost += target - arr[i];
+				}else {
+					target = arr[i];
 				}
-				if(!flag) {
-					idx--;
-					target = arr[idx];
-				}
-				
 			}
 			
-			sb.append(total_budget+"\n");
+			sb.append(cost+"\n");
 		}
 		
 		System.out.println(sb.toString());
