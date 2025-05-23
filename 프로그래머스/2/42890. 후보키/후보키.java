@@ -52,7 +52,7 @@ class Solution {
         for(int r = 0; r < row; r++){
             StringBuilder sb = new StringBuilder();
             for(int num : set){
-                sb.append(relation[r][num]);
+                sb.append(relation[r][num]+",");
             }
             tmpSet.add(sb.toString());
         }
