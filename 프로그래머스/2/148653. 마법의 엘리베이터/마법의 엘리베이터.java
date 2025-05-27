@@ -1,31 +1,25 @@
 import java.util.*;
-
+/*
+아이디어: 그리디? 백트래킹?(동전 문제와 유사한 느낌)
+*/ 
 class Solution {
     public int solution(int storey) {
-        int count = 0;  // 이동 횟수
+        int answer = 0;
         
+        //끝자리부터 판별 -> 4이하(내림), 5이상(올림) -> 이때, 5일경우에는 앞자리가 5이상일때만 올리기
         while(storey > 0){
-            int digit = storey%10;  // 현재 자릿수
-            int next_digit = (storey/10)%10;
+            int num = storey % 10;  // 끝짜리 추출
+            int nextNum = (storey/10) % 10;     // 앞자리 추출
             
-            if(digit < 5){             // 5미만 -> 감소
-                count += digit;
-                storey /= 10;
-            }else if(digit > 5){       // 5이상 -> 증가
-                count += (10-digit);
-                storey = (storey/10) + 1;
+            if(num > 5 || (num == 5 && nextNum >= 5)){  
+                answer += (10-num);
+                storey += 10;       // 올림 처리 
             }else{
-                // 5일경우
-                if(next_digit >= 5){
-                    count += (10-digit);
-                    storey = (storey/10) + 1;
-                }else{
-                    count += digit;
-                    storey /= 10;
-                }
+                answer += num;
             }
+            storey /= 10;
         }
         
-        return count;
+        return answer;
     }
 }
