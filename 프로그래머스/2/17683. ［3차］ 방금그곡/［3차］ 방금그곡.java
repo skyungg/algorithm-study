@@ -2,30 +2,29 @@ import java.util.*;
 
 class Solution {
     public String solution(String m, String[] musicinfos) {
-        String answer = "(None)";   // 기본값 none
+        String answer = "(None)";
+        m = convert(m);     // # 처리
         
-        // 0. #처리
-        m = convert(m);
-        
-        int resTime = 0;
-        // 1. 정보 분리        
+        int maxTime = 0;
         for(int i = 0; i < musicinfos.length; i++){
             String [] tmp = musicinfos[i].split(",");
-            int time = getTime(tmp[0], tmp[1]);
-            String original = convert(tmp[3]);
+            int playTime = getTime(tmp[0], tmp[1]);     // 재생 시간
+            String oriMelody = convert(tmp[3]);    // 기본 멜로디 라인
+            String curMelody = getMelody(playTime, oriMelody);  // 재생시간 동안의 멜로디 
             
-            String melody = getMelody(time, original);
-
-            if(melody.contains(m)){
-                if(time > resTime){
-                    resTime = time;
+            if(curMelody.contains(m)){
+                if(playTime > maxTime){
+                    maxTime = playTime;     // 재생 시간 최댓값 갱신
                     answer = tmp[2];
                 }
             }
         }
+        
         return answer;
     }
+    
     String convert(String str){
+        // # 변환하기
         return str.replaceAll("C#", "c")
             .replaceAll("D#", "d")
             .replaceAll("F#", "f")
@@ -34,36 +33,26 @@ class Solution {
             .replaceAll("B#", "b");
     }
     
-    int getTime(String start, String end){
-        String [] sarr = start.split(":");
-        String [] earr = end.split(":");
+    int getTime(String startTime, String endTime){
+        String [] start = startTime.split(":");
+        String [] end = endTime.split(":");
         
-        int h = Integer.parseInt(earr[0]) - Integer.parseInt(sarr[0]);
-        int m = Integer.parseInt(earr[1]) - Integer.parseInt(sarr[1]);
+        int hour = Integer.parseInt(end[0]) - Integer.parseInt(start[0]);
+        int min = Integer.parseInt(end[1]) - Integer.parseInt(start[1]);
         
-        return h*60+m;
+        return hour*60+min;
+        
     }
     
-    String getMelody(int size, String str){
+    String getMelody(int time, String oriMelody){
         StringBuilder sb = new StringBuilder();
-        int len = str.length();
+        int length = oriMelody.length();
         
-        for(int i = 0; i < size; i++){
-            sb.append(str.charAt(i%len));
+        for(int i = 0; i < time; i++){
+            sb.append(oriMelody.charAt(i%length));
         }
         
-        
-        return sb.toString(); 
+        return sb.toString();
     }
-    
-    // boolean containsMelody(String melody, String m) {
-    //     for (int i = 0; i <= melody.length() - m.length(); i++) {
-    //         if (melody.startsWith(m, i)) {
-    //             if (i + m.length() >= melody.length() || melody.charAt(i + m.length()) != '#') {
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    //     return false;
-    // }
+
 }
