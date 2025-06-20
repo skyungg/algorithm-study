@@ -8,60 +8,57 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		int s = Integer.parseInt(st.nextToken());
-		int p = Integer.parseInt(st.nextToken());
+		int S = Integer.parseInt(st.nextToken());
+		int P = Integer.parseInt(st.nextToken());
 		
-		char [] str = br.readLine().toCharArray();
+		String str = br.readLine();
 		
-		int [] minCount = new int[4];	// 조건
+		int [] arr = new int[4];
 		st = new StringTokenizer(br.readLine());
 		for(int i = 0; i < 4; i++) {
-			minCount[i] = Integer.parseInt(st.nextToken());
-		}
-		
-		int [] curCount = new int[4];	// 현재 개수
-		
-		// 첫 문자열 확인
-		for(int i = 0; i < p; i++) {
-			if(str[i] == 'A') curCount[0]++;
-			else if(str[i] == 'C') curCount[1]++;
-			else if(str[i] == 'G') curCount[2]++;
-			else if(str[i] == 'T') curCount[3]++;
+			arr[i] = Integer.parseInt(st.nextToken());
 		}
 		
 		int result = 0;
-		if(checkNum(minCount, curCount)) {
-			result++;
+		int [] cnt = new int[4];
+		for(int i = 0; i < P; i++) {
+			char ch = str.charAt(i);
+			
+			if(ch == 'A') cnt[0] += 1;
+			else if(ch == 'C') cnt[1] += 1;
+			else if(ch == 'G') cnt[2] += 1;
+			else if(ch == 'T') cnt[3] += 1;
+			
 		}
+		if(isValid(cnt, arr)) result++;
 		
-		for(int i = p; i < s; i++) {
-			// 새문자 추가하기
-			if(str[i] == 'A') curCount[0]++;
-			else if(str[i] == 'C') curCount[1]++;
-			else if(str[i] == 'G') curCount[2]++;
-			else if(str[i] == 'T') curCount[3]++;
+		for(int i = 1; i <= S-P; i++) {
 			
-			// 이전문자 제거하기
-			if(str[i-p] == 'A') curCount[0]--;
-			else if(str[i-p] == 'C') curCount[1]--;
-			else if(str[i-p] == 'G') curCount[2]--;
-			else if(str[i-p] == 'T') curCount[3]--;
+			char pre = str.charAt(i-1);		// 이전 문자 개수 차감
+			if(pre == 'A') cnt[0] -= 1;
+			else if(pre == 'C') cnt[1] -= 1;
+			else if(pre == 'G') cnt[2] -= 1;
+			else if(pre == 'T') cnt[3] -= 1;
 			
-			if(checkNum(minCount, curCount)) {
-				result++;
-			}
+			char next = str.charAt(i+P-1);		// 이전 문자 개수 차감
+			if(next == 'A') cnt[0] += 1;
+			else if(next == 'C') cnt[1] += 1;
+			else if(next == 'G') cnt[2] += 1;
+			else if(next == 'T') cnt[3] += 1;	
+			
+			if(isValid(cnt, arr)) result++;
+			
 		}
 		
 		System.out.println(result);
 		
 	}
 	
-	private static boolean checkNum(int [] minCount, int [] curCount) {
-		for(int i = 0; i < 4; i++) {
-			if(curCount[i] < minCount[i]) {
-				return false;
-			}
+	static boolean isValid(int [] cnt, int [] arr) {
+		for(int idx = 0; idx < 4; idx++) {
+			if(cnt[idx] < arr[idx]) return false;
 		}
+		
 		return true;
 	}
 
