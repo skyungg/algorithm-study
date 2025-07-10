@@ -19,19 +19,17 @@ public class Main {
 				}
 			}
 			
-			// dp
-			int [][] dp = new int[n][3];	// 0:아무것도 선택X, 1:첫번째 행, 2:두 번째 행 선택
-			dp[0][0] = 0;
+			// dp			
+			int [][] dp = new int[2][n+1];	// 0:첫번째 행, 1:두 번째 행 선택
 			dp[0][1] = board[0][0];
-			dp[0][2] = board[1][0];
+			dp[1][1] = board[1][0];
 			
-			for(int j = 1; j < n; j++) {
-				dp[j][0] = Math.max(Math.max(dp[j-1][0], dp[j-1][1]), dp[j-1][2]);	// 아무것도 선택X
-				dp[j][1] = Math.max(dp[j-1][0], dp[j-1][2]) + board[0][j];	// 첫 번째 행 선택
-				dp[j][2] = Math.max(dp[j-1][0], dp[j-1][1]) + board[1][j];	// 두 번재 행 선택
+			for(int j = 2; j <= n; j++) {
+				dp[0][j] = Math.max(dp[1][j-1], dp[1][j-2]) + board[0][j-1];	// 첫 번째 행 선택
+				dp[1][j] = Math.max(dp[0][j-1], dp[0][j-2]) + board[1][j-1];	// 두 번재 행 선택
 			}
 			
-			sb.append(Math.max(Math.max(dp[n-1][0], dp[n-1][1]), dp[n-1][2])+"\n");
+			sb.append(Math.max(dp[0][n], dp[1][n])+"\n");
 		}
 		
 		// 정답 출력
