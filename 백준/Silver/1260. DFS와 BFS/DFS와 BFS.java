@@ -2,70 +2,103 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
-    static List<Integer> list = new LinkedList<>();
-    public static void main(String [] args) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
-        int v = Integer.parseInt(st.nextToken());
-
-        for(int i = 0; i <= n; i++){
-            graph.add(new ArrayList<>());
-        }
-
-        for(int i = 0; i < m; i++){
-            st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-            graph.get(a).add(b);
-            graph.get(b).add(a);
-        }
-        for(int i = 0; i <= n; i++){
-            Collections.sort(graph.get(i));     // 오름 차순 정렬
-        }
-
-        dfs(v, new boolean[n+1]);
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < list.size(); i++){
-            sb.append(list.get(i)+" ");
-        }
-        sb.append("\n");
-        bfs(v, new boolean[n+1], sb);
-    }
-
-    static void dfs(int start, boolean [] visited){
-        if(!visited[start]){
-            visited[start] = true;
-            list.add(start);
-        }
-
-        for(int i = 0; i < graph.get(start).size(); i++){
-            if(visited[graph.get(start).get(i)]) continue;
-//            visited[graph.get(start).get(i)] = true;
-            dfs(graph.get(start).get(i), visited);
-        }
-    }
-
-    static void bfs(int start, boolean [] visited, StringBuilder sb){
-//        StringBuilder sb = new StringBuilder();
-        Queue<Integer> que = new LinkedList<>();
-        que.add(start);
-        visited[start] = true;
-        sb.append(start+" ");
-
-        while(!que.isEmpty()){
-            int num = que.poll();
-
-            ArrayList<Integer> tmpGraph = graph.get(num);
-            for(int i = 0; i < tmpGraph.size(); i++){
-                if(visited[tmpGraph.get(i)]) continue;
-                que.add(tmpGraph.get(i));
-                visited[tmpGraph.get(i)] = true;
-                sb.append(tmpGraph.get(i)+" ");
-            }
-        }
-        System.out.println(sb.toString());
-    }
+	static List<List<Integer>> list = new ArrayList<>();	// 인접 리스트
+	static boolean[] dVisited;
+	static List<Integer> dResult = new ArrayList<>();
+	
+	public static void main(String[] args) throws IOException{
+		// TODO Auto-generated method stub
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		int N = Integer.parseInt(st.nextToken());	// 정점 개수
+		int M = Integer.parseInt(st.nextToken());	// 간선 개수
+		int V = Integer.parseInt(st.nextToken());	// 시작정점
+		
+		for(int i = 0; i <= N; i++) {
+			list.add(new ArrayList<>());
+		}
+		
+		// 입력 
+		for(int i = 0; i < M; i++) {
+			st = new StringTokenizer(br.readLine());
+			
+			int a = Integer.parseInt(st.nextToken());	
+			int b = Integer.parseInt(st.nextToken());
+			
+			list.get(a).add(b);
+			list.get(b).add(a);
+		}
+		
+		// 정렬
+		for(int i = 1; i <= N; i++) {
+			if(!list.get(i).isEmpty()) {
+				// 오름차순 정렬
+				Collections.sort(list.get(i));
+			}
+		}
+		
+		// dfs 돌리기
+		dVisited = new boolean[N+1];
+		dfs(V);
+		
+		// bfs 돌리기
+		List<Integer> bfsResult = bfs(N, V);
+		
+		StringBuilder sb = new StringBuilder();
+		for(int num : dResult) {
+			sb.append(num+" ");
+		}
+		sb.append("\n");
+		for(int num : bfsResult) {
+			sb.append(num+" ");
+		}
+		
+		System.out.println(sb.toString());
+	}
+	
+	static void dfs(int start) {
+		dVisited[start] = true;
+		dResult.add(start);
+		
+		for(int i = 0; i < list.get(start).size(); i++) {
+			if(!dVisited[list.get(start).get(i)]) {
+				dfs(list.get(start).get(i));
+			}
+		}
+		
+		return;
+		
+	}
+	
+	static List<Integer> bfs(int N, int start) {
+		Queue<Integer> que = new LinkedList<>();
+		boolean [] visited = new boolean[N+1];
+		List<Integer> result = new ArrayList<>();
+		
+		// 시작 정점 처리
+		visited[start] = true;
+		result.add(start);
+		que.add(start);
+		
+		while(!que.isEmpty()) {
+			int num = que.poll();
+			
+			List<Integer> curList = list.get(num);
+			
+			for(int i = 0; i < curList.size(); i++) {
+				if(visited[curList.get(i)]) continue;	// 이미 방문
+				
+				result.add(curList.get(i));
+				visited[curList.get(i)] = true;
+				que.add(curList.get(i));
+			}
+		}
+		
+		// 결과 반환
+		return result;
+	}
 }
+
+
+
