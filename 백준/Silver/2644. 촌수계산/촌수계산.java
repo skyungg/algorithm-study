@@ -1,64 +1,56 @@
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int n;
-    static ArrayList<ArrayList<Integer>> list = new ArrayList<>();
-    static boolean [] visited;
+	static List<List<Integer>> graph = new ArrayList<>();
+	
+	public static void main(String[] args) throws IOException{
+		// TODO Auto-generated method stub
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+		
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int t1 = Integer.parseInt(st.nextToken());
+		int t2 = Integer.parseInt(st.nextToken());
+		
+		int m = Integer.parseInt(br.readLine());
+		for(int i = 0; i <= n; i++) {
+			graph.add(new ArrayList<>());
+		}
+		
+		for(int i = 0; i < m; i++) {
+			st = new StringTokenizer(br.readLine());
+			int a = Integer.parseInt(st.nextToken());
+			int b = Integer.parseInt(st.nextToken());
+			
+			graph.get(a).add(b);
+			graph.get(b).add(a);
+		}
+		
+		Queue<int []> que = new LinkedList<>();
+		que.add(new int[] {t1, 0});		// 현재 번호, 촌수관계
+		boolean [] visited = new boolean[n+1];
+		visited[t1] = true;
+		int result = -1;
+		while(!que.isEmpty()) {
+			int [] point = que.poll();
+			
+			if(point[0] == t2) {
+				result = point[1];
+				break;
+			}
+			
+			List<Integer> list = graph.get(point[0]);
+			
+			for(int i = 0; i < list.size(); i++) {
+				if(!visited[list.get(i)]) {
+					visited[list.get(i)] = true;
+					que.add(new int[] {list.get(i), point[1]+1});
+				}
+			}
+		}
+		
+		System.out.println(result);
+	}
 
-    public static void main(String [] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-
-        n = Integer.parseInt(st.nextToken());
-
-        st = new StringTokenizer(br.readLine());
-        int p1 = Integer.parseInt(st.nextToken());
-        int p2 = Integer.parseInt(st.nextToken());
-
-        st = new StringTokenizer(br.readLine());
-        int m = Integer.parseInt(st.nextToken());
-        visited = new boolean[n+1];
-
-        for(int i = 0; i < n+1; i++){
-            list.add(new ArrayList<Integer>());
-        }
-
-        for(int i = 0; i < m; i++){
-            st = new StringTokenizer(br.readLine());
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-
-            list.get(x).add(y);
-            list.get(y).add(x);
-        }
-
-        Queue<Integer> que = new LinkedList<>();
-        que.add(p1);
-        int cnt [] = new int[n+1];      // 촌수값 저장
-
-        while(!que.isEmpty()){
-            int p = que.poll();
-
-            if(p == p2) break;
-
-            for(int i = 0; i < list.get(p).size(); i++){
-                int tmp = list.get(p).get(i);
-
-                if(cnt[tmp] != 0) continue;     // 이미 확인
-                cnt[tmp] = cnt[p] + 1;      // 현재 촌수는 이전 촌수 + 1
-                que.add(tmp);
-
-            }
-        }
-
-        if(cnt[p2] != 0) System.out.print(cnt[p2]);
-        else System.out.print(-1);
-    }
 }
