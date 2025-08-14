@@ -5,7 +5,6 @@ public class Main {
 	static int n, m, h;
 	static int [][][] map;
 	static Queue<int []> que = new LinkedList<>();
-	static boolean [][][] visited;
 	static int rest_cnt = 0;	// 익지 않은 토마토 수
 	static int [] dh = {1, -1, 0, 0, 0, 0};
 	static int [] dx = {0, 0, -1, 0, 1, 0};
@@ -19,7 +18,6 @@ public class Main {
 		h = Integer.parseInt(st.nextToken());
 		
 		map = new int[h][n][m];	
-		visited = new boolean[h][n][m];
 		
 		for(int k = 0; k < h; k++) {
 			for(int i = 0; i < n; i++) {
@@ -28,7 +26,6 @@ public class Main {
 					map[k][i][j] = Integer.parseInt(st.nextToken());
 					if(map[k][i][j] == 1) {
 						que.add(new int [] {k, i, j, 0});	// 익은 토마토 que에 삽입
-						visited[k][i][j] = true;	// 
 					}else if(map[k][i][j] == 0) rest_cnt++;		// 익지 않은 토마토 수
 				}
 			}
@@ -51,14 +48,11 @@ public class Main {
 				int tx = point[1] + dx[i];
 				int ty = point[2] + dy[i];
 				
-				if(checkRange(th, tx, ty)) {
-					if(!visited[th][tx][ty] && map[th][tx][ty] == 0) {
-						visited[th][tx][ty] = true;
-						map[th][tx][ty] = 1;
-						que.add(new int[] {th, tx, ty, point[3]+1});
-						time = Math.max(time, point[3]+1);
-						rest_cnt--;
-					}
+				if(checkRange(th, tx, ty) && map[th][tx][ty] == 0) {
+					map[th][tx][ty] = 1;
+					que.add(new int[] {th, tx, ty, point[3]+1});
+					time = Math.max(time, point[3]+1);
+					rest_cnt--;
 				}
 			}
 		}
