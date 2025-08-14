@@ -31,8 +31,11 @@ public class Main {
 			}
 		}
 		
-		// 후숙처리하기
-		System.out.println(bfs());
+		if(rest_cnt == 0) System.out.println(0);
+		else {
+			// 후숙처리하기
+			System.out.println(bfs());
+			}
 	}
 	
 	static int bfs() {
