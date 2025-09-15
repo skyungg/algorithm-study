@@ -22,7 +22,7 @@ public class Main {
             StringTokenizer st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
-                total_people += map[i][j];	// 총 인원 카운트
+                total_people += map[i][j];	// 총 인원 카운트 -> 나중에 5구역 카운트 안하고 바로 구하려고
             }
         }
         
@@ -31,10 +31,10 @@ public class Main {
         	for(int y = 0; y < N; y++) {
         		for(int d1 = 0; d1 < N; d1++) {
                 	for(int d2 = 0; d2 < N; d2++) {
-                		if(x + d1 + d2 >= N) continue;				// 제시한 조건 범위 넘어감
-                		if (y - d1 < 0 || y + d2 >= N) continue;
+                		if(x + d1 + d2 >= N) continue;				// 아래 범위 벗어남
+                		if (y - d1 < 0 || y + d2 >= N) continue;	// 왼쪽-오른쪽 범위 벗어나느 경우
                     	
-                		solve(x, y, d1, d2);
+                		solve(x, y, d1, d2);	// 기준점과 거리 두개 선정하기
                     }
                 }
             }
@@ -60,31 +60,31 @@ public class Main {
 
         int[] count = new int[5];
 
-        // 1 구역 인구수
+        // 1. 1구역 인구수 구하기 (0, 0) - (x+d1-1, y)
         for (int i = 0; i < x + d1; i++) {
             for (int j = 0; j <= y; j++) {
-                if (visited[i][j]) break;
+                if (visited[i][j]) break;		// 경계선 만나면 바로 나가
                 count[0] += map[i][j];
             }
         }
 
-        // 2 구역 인구수
-        for (int i = 0; i <= x + d2; i++) {
+        // 2. 2구역 인구수 구하기 (0, 0) - (x+d1-1, y) -> 오른쪽 위 영역
+        for (int i = 0; i <= x + d2; i++) {			// 오른쪽에서 -> 왼쪽 확인
             for (int j = N - 1; j > y; j--) {
-                if (visited[i][j]) break;
+                if (visited[i][j]) break; 		// 경계선 만나면 바로 나가
                 count[1] += map[i][j];
             }
         }
 
-        // 3 구역 인구수
+        // 3. 3구역 인구수 구하기 (x+d1, 0) - (N-1, y-d1+d2-1) -> 왼쪽아래
         for (int i = x + d1; i < N; i++) {
             for (int j = 0; j < y - d1 + d2; j++) {
-                if (visited[i][j]) break;
+                if (visited[i][j]) break;		// 경계선 만나면 바로 나가기
                 count[2] += map[i][j];
             }
         }
 
-        // 4 구역 인구수
+        // 4. 4구역 인구수 구하기 (x+d2+1, N-1) - (N-1, y-d1+d2) -> 오른쪽아래
         for (int i = x + d2 + 1; i < N; i++) {
             for (int j = N - 1; j >= y - d1 + d2; j--) {
                 if (visited[i][j]) break;
@@ -92,17 +92,16 @@ public class Main {
             }
         }
 
-        // 5 구역 인구수
+        // 5. 5구역 인구수
         count[4] = total_people;
-
-        for (int i = 0; i < 4; i++) {
-        	count[4] -= count[i];
+        for (int i = 0; i < 4; i++) {		
+        	count[4] -= count[i];		// 전체 인구수에서 (1~4)구역 합 빼기
         }
 
         // 정렬
-        Arrays.sort(count);
+        Arrays.sort(count);			// 정렬 -> 차이 구하려고
 
-        // 최대 - 최소
+        // 최솟값 갱신하기
         min_diff = Math.min(min_diff, count[4] - count[0]);
 	}
 
