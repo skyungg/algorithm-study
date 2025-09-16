@@ -8,40 +8,38 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		int n = Integer.parseInt(st.nextToken());
-		long m = Long.parseLong(st.nextToken());
+		int N = Integer.parseInt(st.nextToken());	// 나무 수
+		long M = Integer.parseInt(st.nextToken());	// 가져갈 나무 합
 		
-		long [] arr = new long[n];
+		long [] tree = new long[N];
+		long start = 0;
+		long end = -1;
+		
 		st = new StringTokenizer(br.readLine());
-		long end = 0;
-		for(int i = 0; i < n; i++) {
-			arr[i] = Long.parseLong(st.nextToken());
-			end = Math.max(end,  arr[i]);
+		for(int i = 0; i < N; i++) {
+			tree[i] = Integer.parseInt(st.nextToken());
+			end = Math.max(end,  tree[i]);
 		}
 		
-		// 이분 탐색
-		long start = 1;
-		long result = 0;
+		
+		long maxHeight = 0;
 		while(start <= end) {
-			long h = (start+end)/2;
+			long mid = (start + end)/2;
 			
-			long tmpSum = 0;
-			for(int i = 0; i < n; i++) {
-				if(arr[i]-h > 0) {
-					tmpSum += (arr[i] - h);					
-				}
+			long sum = 0;
+			for(int i = 0; i < N; i++) {
+				if(tree[i] - mid > 0 ) sum += (tree[i]-mid);
 			}
 			
-			if(tmpSum < m) {	// 나무가 부족 -> 높이 낮추기
-				end = h-1;
-			}else{	// 나무 과잉 -> 높이 올리기
-				result = h;
-				start = h+1;
+			if(sum >= M) {
+				maxHeight = Math.max(maxHeight, mid);
+				start = mid+1;
+			}else {
+				end = mid-1;
 			}
 		}
 		
-		System.out.println(result);
-		
+		System.out.println(maxHeight);
 	}
 
 }
