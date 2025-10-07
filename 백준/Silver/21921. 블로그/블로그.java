@@ -1,70 +1,49 @@
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int n, x;
-    static int arr [];
-    static int sumArr [];
-    static int maxVisited;
-    static int count;
 
-    public static void main(String [] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+	public static void main(String[] args) throws IOException{
+		// TODO Auto-generated method stub
+		// 입력
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int N = Integer.parseInt(st.nextToken());
+		int X = Integer.parseInt(st.nextToken());
+		
+		int [] day = new int[N];
+		st = new StringTokenizer(br.readLine());
+		for(int i = 0; i < N; i++) {
+			day[i] = Integer.parseInt(st.nextToken());
+		}
+		
+		// 구현
+		int sum = 0;
+		for(int i = 0; i < X; i++) {
+			sum += day[i];		// 초기 X일까지 합
+		}
+		
+		int result = sum;
+		int count = 1;
+		
+		for(int i = X; i < N; i++) {
+			sum += day[i] - day[i-X];	 // + 그 다음 값 - 가장 첫 날값
+			
+			if(sum > result) {
+				result = sum;
+				count = 1;
+			}else if(sum == result) {
+				count++;
+			}
+		}
+		
+		// 출력
+		if(result == 0) {
+			System.out.println("SAD");
+		}else {
+			System.out.println(result);
+			System.out.println(count);
+		}	
+	}
 
-        n = Integer.parseInt(st.nextToken());
-        x = Integer.parseInt(st.nextToken());
-
-        st = new StringTokenizer(br.readLine());
-
-        arr = new int[n];
-        sumArr = new int[n+1];
-        int sum = Integer.parseInt(st.nextToken());
-        int cur = 0;
-        sumArr[cur++] = 0;
-        sumArr[cur++] = sum;
-        for(int i = 1; i < n; i++){
-            int tmp = Integer.parseInt(st.nextToken());
-            sumArr[cur] = sumArr[cur-1] + tmp;
-            sum += tmp;
-            cur++;
-        }
-
-        if(sum == 0){
-            System.out.print("SAD");
-        }else{
-            solution();
-            System.out.println(maxVisited);
-            System.out.print(count);
-        }
-    }
-
-    static void solution(){
-        int start = 0;
-        int end = x;
-
-        maxVisited = 0;
-        count = 1;
-
-        while(end <= n){
-            int sum = 0;
-            sum = sumArr[end] - sumArr[start];
-
-            if(maxVisited == sum){
-                count++;
-            }else{
-                if(sum > maxVisited){
-                    maxVisited = sum;
-                    count = 1;          // 갱신되는 순간, 초기값은 1
-                }
-            }
-
-            start++;
-            end++;
-
-        }
-    }
 }
