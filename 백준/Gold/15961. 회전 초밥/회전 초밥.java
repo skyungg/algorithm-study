@@ -21,31 +21,31 @@ public class Main {
 		}
 		
 		// 구현
-		int [] sushi = new int[d+1];	// 초밥 종류
-		Set<Integer> set = new HashSet<>();
-		sushi[c]++;		// 쿠폰 초밥 종류 1증가
-		set.add(c);
+		int [] sushi_type = new int[d+1];	// 초밥 종류
+		sushi_type[c]++;		// 쿠폰 초밥 종류 1증가
+		int maxCount = 1;		//  초밥 종류 수
 		
 		for(int i = 0; i < k; i++) {
-			set.add(arr[i]);
-			sushi[arr[i]]++;
+			if(sushi_type[arr[i]] == 0) maxCount++;
+			sushi_type[arr[i]]++;
 		}
 		
-		int count = set.size();		// 현재 set 사이즈를 count 초기화
-		 
+		int tmpCount = maxCount;
 		for(int i = k; i < N+k; i++) {
-			sushi[arr[i-k]]--;		//  이전 연속에서 가장 첫 번째 접시 빼기
-			if(sushi[arr[i-k]] == 0) {		// 해당 초밥 종류가 존재 X -> set에서도 삭제 
-				set.remove(arr[i-k]);
+			int pre_type = arr[i-k];		// 이전 연속 접시에서 가장 첫번째 접시의 초밥 종류
+			sushi_type[pre_type]--;		//  이전 연속에서 가장 첫 번째 접시의 초밥 종류 수 감소
+			
+			if(sushi_type[pre_type] == 0) {		// 해당 초밥 종류가 존재 X ->  count 감소
+				tmpCount--;
 			}
 			
-			set.add(arr[i]);		// 현재 위치 접시 추가하기
-			sushi[arr[i]]++;		// 해당 초밥 종류 증가 
+			sushi_type[arr[i]]++;		// 해당 초밥 종류 증가 
+			if(sushi_type[arr[i]] == 1) tmpCount++;		// 새로운 초밥 종류 추가
 			
-			count = Math.max(count, set.size());
+			maxCount = Math.max(maxCount, tmpCount);
 		}
 		
-		System.out.println(count);
+		System.out.println(maxCount);
 
 	}
 
