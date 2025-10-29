@@ -1,5 +1,9 @@
 import java.util.*;
 
+/*
+  (구) 각 지점 사이의 거리의 최솟값 중 가장 큰 값
+  
+*/
 class Solution {
     public int solution(int distance, int[] rocks, int n) {
         int answer = 0;
