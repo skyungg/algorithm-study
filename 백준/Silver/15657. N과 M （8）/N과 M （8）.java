@@ -24,14 +24,14 @@ public class Main {
 		// 정렬
 		Arrays.sort(nums);
 		
-		dfs(0);
+		dfs(0, 0);
 		
 		// 정답 출력
 		System.out.println(sb);
 
 	}
 	
-	static void dfs(int cnt) {
+	static void dfs(int cnt, int idx) {
 		if(cnt == M) {
 			for(int i = 0; i < M; i++) {
 				sb.append(result[i]+" ");
@@ -40,10 +40,9 @@ public class Main {
 			return;
 		}
 		
-		for(int i = 0; i < N; i++) {
-			if(cnt > 0 && nums[i] < result[cnt-1]) continue;
+		for(int i = idx; i < N; i++) {
 			result[cnt] = nums[i];
-			dfs(cnt+1);
+			dfs(cnt+1, i);
 		}
 	}
 }
