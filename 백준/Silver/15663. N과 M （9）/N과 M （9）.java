@@ -45,18 +45,20 @@ public class Main {
 			return;
 		}
 		
-		// 현재 cnt에서 해당 숫자 중복 체크용 방문 확인 배열
-		boolean [] depth_visited = new boolean[10001];
+//		// 현재 cnt에서 해당 숫자 중복 체크용 방문 확인 배열
+//		boolean [] depth_visited = new boolean[10001];
 		
+		// 현재 cnt에서 이전 값 체크(중복이라면 이전 숫자와 똑같을 것이니)
+		int preNum = -1;
 		for(int i = 0; i < N; i++) {
 			if(visited[i]) continue;
 			
 			// 같은 cnt에서 같은 숫자 중복 X
-			if(depth_visited[nums[i]]) continue;
-			depth_visited[nums[i]] = true;
+			if(nums[i] == preNum) continue;
 			
 			visited[i] = true;
 			result[cnt] = nums[i];
+			preNum = nums[i];
 			dfs(cnt+1);
 			visited[i] = false;
 		}
