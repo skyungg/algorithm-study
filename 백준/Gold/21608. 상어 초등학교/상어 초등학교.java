@@ -2,130 +2,161 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static ArrayList<ArrayList<Integer>> list;
-    static boolean [][] visited;
-    static int [][] classroom;
-    static int n;
-    static int tn;
-    static int [] dx = {-1, 0, 1, 0};
-    static int [] dy = {0, 1, 0, -1};
+	static class Point implements Comparable<Point>{
+		int x;
+		int y;
+		int count;		// 좋아하는 학생수
+		int empty;		// 비어있는 칸
+		
+		public Point(int x, int y, int count, int empty) {
+			this.x = x;
+			this.y = y;
+			this.count = count;
+			this.empty = empty;
+		}
+		
+		/* 정렬
+		 * 1. 인접칸(4방향)에 좋아하는 학생 수가 더 많은 순
+		 * 2. 인접 칸 중 비어있는 칸이 가장 많은 순
+		 * 3. 행, 열  작은 순
+		 * */
+		@Override
+		public int compareTo(Point p) {
+			if(p.count == this.count) {
+				if(p.empty == this.empty) {
+					if(p.x == this.x) return this.y - p.y;
+					else return this.x - p.x;
+				}else return p.empty - this.empty;
+			}else return p.count - this.count;
+		}
+	}
+	
+	static int N;
+	static int [][] map;
+	static List<List<Integer>> list = new ArrayList<>();
+	static int [] dx = {-1, 0, 1, 0};
+	static int [] dy = {0, 1, 0, -1};
+	public static void main(String[] args) throws IOException{
+		// TODO Auto-generated method stub
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		map = new int[N][N];
+		
+		for(int i = 0; i <= N*N; i++) {
+			list.add(new ArrayList<>());
+		}
+		
+		// 입력
+		StringTokenizer st;
+		for(int i = 0; i < N*N; i++) {
+			st = new StringTokenizer(br.readLine());
+			int num = Integer.parseInt(st.nextToken());
+			
+			for(int j = 0; j < 4; j++) {
+				list.get(num).add(Integer.parseInt(st.nextToken()));
+			}
+			
+			// 자리배치 하기
+			bfs(num);
+		}
+		
+		// 만족도 조사
+		int score = 0;
+//		int [] cost = {0, 1, 10, 100, 1000};
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				int target = map[i][j];		// 기준 학생
+				
+				int cnt = 0;
+				for(int idx = 0; idx < 4; idx++) {
+					int tx = i + dx[idx];
+					int ty = j + dy[idx];
+					
+					if(checkRange(tx, ty) && list.get(target).contains(map[tx][ty])) {	// 범위 내 있음
+						cnt++;
+					}
+				}
+				
+				// 점수 계산
+				if(cnt > 0) {
+					score += (int)Math.pow(10, (cnt-1));
+					
+				}
+				
+				
+			}
+		}
+		
+		System.out.println(score);
 
-    static class Point implements Comparable<Point>{
-        int cnt;
-        int empty;
-        int x;
-        int y;
+	}
+	
+	static void bfs(int num) {
+		int [] result = {-1, -1, 21, 21};	// 좋아하는 학생수, 비어있는 칸, 행, 열 초기값 셋팅
+		
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				if(map[i][j] == 0) {
+					// 비어있는 경우 -> 현재 위치를 중점으로 탐색 
+					int cnt = 0;	// 좋아하는 학생 수
+					int empty = 0;	// 비어있는 칸 수
+					
+					for(int idx = 0; idx < 4; idx++) {
+						int tx = i + dx[idx];
+						int ty = j + dy[idx];
+						
+						if(checkRange(tx, ty)) {	// 범위 내 있음
+							if(map[tx][ty] == 0) {		// 비어있는 경우
+								empty++;
+							}else {
+								if(list.get(num).contains(map[tx][ty])) {	// 좋아하는 학생 수경우
+									cnt++;
+								}
+							}
+						}
+						
+					}
+					
+					// 위치 갱신 판단하기
+					if(cnt > result[0]) {		// 좋아하는 학생수가 더 많음 -> 갱신 
+						result[0] = cnt;
+						result[1] = empty;
+						result[2] = i;
+						result[3] = j;
+					}else if(cnt == result[0]) {
+						if(empty > result[1]) {
+							result[0] = cnt;
+							result[1] = empty;
+							result[2] = i;
+							result[3] = j;
+						}else if(empty == result[1]) {
+							if(i < result[2]) {
+								result[0] = cnt;
+								result[1] = empty;
+								result[2] = i;
+								result[3] = j;
+							}else if(i == result[2]) {
+								if(j < result[3]) {
+									result[0] = cnt;
+									result[1] = empty;
+									result[2] = i;
+									result[3] = j;
+								}
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		
+		// 자리 확정하기
+		map[result[2]][result[3]] = num;
+		
+	}
+	
+	static boolean checkRange(int x, int y) {
+		return x >= 0 && x < N && y >= 0 && y < N; 
+	}
 
-        public Point(int cnt, int empty, int x, int y){
-            this.cnt = cnt;
-            this.empty = empty;
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public int compareTo(Point p){
-            // 우선 순위 : cnt -> empty -> x ->y
-            if(this.cnt < p.cnt) return 1;
-            else if(this.cnt == p.cnt){
-                if(this.empty < p.empty) return 1;
-                else if(this.empty == p.empty){
-                    if(this.x > p.x) return 1;
-                    else if(this.x == p.x){
-                        if(this.y > p.y) return 1;
-                    }
-                }
-            }
-            return -1;
-        }
-    }
-
-    public static void main(String [] args) throws Exception{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        n = Integer.parseInt(br.readLine());
-        tn = n*n;
-
-        visited = new boolean[n][n];
-        classroom = new int[n][n];
-        list = new ArrayList<>();
-        for(int i = 0; i <= tn; i++){
-            list.add(new ArrayList<>());
-        }
-        int order [] = new int[tn];
-        for(int i = 0; i < tn; i++){
-            st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken());
-            list.get(start).add(Integer.parseInt(st.nextToken()));
-            list.get(start).add(Integer.parseInt(st.nextToken()));
-            list.get(start).add(Integer.parseInt(st.nextToken()));
-            list.get(start).add(Integer.parseInt(st.nextToken()));
-            order[i] = start;       // 진행 순서
-        }
-
-        for(int i = 0; i < tn; i++){
-            findFriends(order[i]);
-        }
-
-        int result = 0;
-        int count = 0;
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < n; j++){
-                count = 0;
-                int num = classroom[i][j];
-                for(int t = 0; t < 4; t++){
-                    int tx = i + dx[t];
-                    int ty = j + dy[t];
-
-                    if(!isRange(tx, ty)) continue;
-                    if(list.get(num).contains(classroom[tx][ty])) count++;
-                }
-                if(count == 1) result += 1;
-                else if(count == 2) result += 10;
-                else if(count == 3) result += 100;
-                else if(count == 4) result += 1000;
-            }
-        }
-        System.out.println(result);
-    }
-
-    static void findFriends(int start){
-        PriorityQueue<Point> pq = new PriorityQueue<>();
-
-        int fcount = 0;      // 친구 수
-        int tcount = 0;      // 주변 좌석
-
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < n; j++){
-                // 1. 현재 위치 빈자리 확인
-                if(visited[i][j]) continue;
-                fcount = 0;
-                tcount = 0;
-                // 2. 팔방 탐색
-                for(int t = 0; t < 4; t++){
-                    int tx = i + dx[t];
-                    int ty = j + dy[t];
-
-                    if(!isRange(tx, ty)) continue;
-                    if(!visited[tx][ty]) tcount++;
-                    if(list.get(start).contains(classroom[tx][ty]))
-                        fcount++;
-                }
-                pq.add(new Point(fcount, tcount, i, j));
-
-            }
-        }
-        Point p = pq.poll();
-        visited[p.x][p.y] = true;
-        classroom[p.x][p.y] = start;
-
-    }
-
-    static boolean isRange(int i, int j){
-        boolean result = false;
-        if(i >= 0 && i < n && j >= 0 && j < n) result = true;
-
-        return result;
-    }
 }
