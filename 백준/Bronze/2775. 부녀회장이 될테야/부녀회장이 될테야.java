@@ -13,16 +13,14 @@ public class Main {
 		
 		// dp 로 구현
 		int [][] room = new int[15][15];	// 최댓값 14
-		
-		for(int c = 1; c < 15; c++) {		// 0층 모든 호수 인원 채우기
-			room[0][c] = c;
-		}
-		
-		for(int r= 1; r < 15; r++) room[r][1] = 1;	// 모든 층의 1호 인원수는 1
-		
-		
-		for(int r = 1; r < 15; r++) {
-			for(int c = 2; c < 15; c++) {
+
+		for(int r = 0; r < 15; r++) {
+			for(int c = 1; c < 15; c++) {
+                if(r==0){                // 0층 호수 초기 셋팅 
+                    room[r][c] = c;
+                    continue;
+                }
+                
 				room[r][c] = room[r-1][c] + room[r][c-1];
 			}
 		}
